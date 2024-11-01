@@ -1,0 +1,45 @@
+**backend** • **Docs**
+
+***
+
+# backend
+
+## Modules
+
+- [Controls/public\_auth/User](Controls/public_auth/User/README.md)
+- [Controls/public\_post/post](Controls/public_post/post/README.md)
+- [Controls/save\_post/Save\_Post](Controls/save_post/Save_Post/README.md)
+- [Controls/user\_comment/comment](Controls/user_comment/comment/README.md)
+- [Controls/user\_friend/friend](Controls/user_friend/friend/README.md)
+- [Controls/user\_like/like](Controls/user_like/like/README.md)
+- [Controls/user\_notification/notification](Controls/user_notification/notification/README.md)
+- [Controls/user\_post/Post](Controls/user_post/Post/README.md)
+- [Controls/user\_profile/profile](Controls/user_profile/profile/README.md)
+- [Controls/user\_stories/stories](Controls/user_stories/stories/README.md)
+- [db/Connect](db/Connect/README.md)
+- [funcation/CreateJwt](funcation/CreateJwt/README.md)
+- [funcation/soket](funcation/soket/README.md)
+- [funcation/VerifyJwt](funcation/VerifyJwt/README.md)
+- [index](index/README.md)
+- [JoiType](JoiType/README.md)
+- [middlewares/authenticateUser](middlewares/authenticateUser/README.md)
+- [models/Comment](models/Comment/README.md)
+- [models/CountLike](models/CountLike/README.md)
+- [models/Friend](models/Friend/README.md)
+- [models/Like](models/Like/README.md)
+- [models/Notification](models/Notification/README.md)
+- [models/Post](models/Post/README.md)
+- [models/SavePost](models/SavePost/README.md)
+- [models/Strories](models/Strories/README.md)
+- [models/User](models/User/README.md)
+- [routes/privet/user/comment](routes/privet/user/comment/README.md)
+- [routes/privet/user/friend](routes/privet/user/friend/README.md)
+- [routes/privet/user/like](routes/privet/user/like/README.md)
+- [routes/privet/user/Notification](routes/privet/user/Notification/README.md)
+- [routes/privet/user/Post](routes/privet/user/Post/README.md)
+- [routes/privet/user/profile](routes/privet/user/profile/README.md)
+- [routes/privet/user/save\_post](routes/privet/user/save_post/README.md)
+- [routes/privet/user/stroies](routes/privet/user/stroies/README.md)
+- [routes/Public/post/post](routes/Public/post/post/README.md)
+- [routes/Public/user/user](routes/Public/user/user/README.md)
+- [type](type/README.md)

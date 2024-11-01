@@ -1,0 +1,23 @@
+@media (max-width:422px) {
+    .card{
+      width: 250px;
+      transform: translateX(50px);
+    }
+    
+  }
+@media (max-width:312px) {
+    .card{
+      width: 250px;
+      transform: translateX(80px);
+    }
+    
+  }
+@media (max-width:267px) {
+    .card{
+      width: 200px;
+      transform: translateX(50px);
+    }
+    
+  }
+  
+  
