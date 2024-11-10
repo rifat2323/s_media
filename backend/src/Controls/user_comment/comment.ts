@@ -102,6 +102,9 @@ export const getMostCommentedPost = async (req:ExtraReq,res:Response)=>{
         }
       }
     )
+    if(post.length === 0){
+      return res.status(400).json({post:[]})
+    }
      const sendCursor  =post.length > 0 ? post[post.length - 1].commentCount : null
      return res.status(200).json({post,sendCursor})
  
@@ -139,5 +142,16 @@ export const deleteComment = async (req:ExtraReq,res:Response)=>{
   if(!deleteComment){
      return res.status(404).send("comment not found")
   }
+ return res.status(200).send({deleted:true})
+}
+export const s = async (_req:ExtraReq,res:Response)=>{
+
+  
+  const t  =  await LikeCommentSchema.findOne({postId:"6729d3202c9f94df6806c370"})
+  if (t) {
+   t.LikeCount = 10000;
+   await t.save();
+ }
+
  return res.status(200).send({deleted:true})
 }

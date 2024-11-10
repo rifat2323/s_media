@@ -11,6 +11,11 @@ import ImprovedColorfulFriendsList from '@/components/profile/Friends';
 import FriendSugg from '@/components/profile/FriendSugg';
 import FriendRequest from '@/components/profile/FriendRequest';
 
+import UserProfile from '@/components/common/UserProfile';
+import { useProfile } from '@/zustan/Profile';
+import { useProfileSuggation } from '@/zustan/profile_Suggation';
+import { useFriendReq } from '@/zustan/getFriendReq';
+
 const UserPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('posts');
   const [friends,setFriend] = useState<[{FriendId:string}]| []>([])
@@ -114,8 +119,14 @@ const UserPage: React.FC = () => {
 
   }
 
-  
-
+   const dataF = useProfile((state)=>state.friends)
+   const noMoreFriend = useProfile((state)=>state.noMoreFriend)
+   const setFriends = useProfile((state)=>state.setFriend)
+   const suggationData = useProfileSuggation((state)=>state.data)
+   const suggationSet = useProfileSuggation((state)=>state.getMoreSuggestion)
+   const noMoreSuggestion = useProfileSuggation((state)=>state.noMoreSuggestion)
+   const {Freq,getFriendReq,noMoreReq} = useFriendReq((state)=>state)
+    console.log(Freq)
   return (
     <div ref={ref} className="max-w-4xl mx-auto mt-0 max-h-dvh overflow-y-auto scrollbar-hide ">
       {/* Cover Photo */}
@@ -162,6 +173,11 @@ const UserPage: React.FC = () => {
           </button>
 
           <button
+           onMouseEnter={()=>{
+            if(dataF && dataF.length && dataF.length > 0 || noMoreFriend ) return
+            setFriends()
+          }}
+
             className={`py-4 w-1/3 text-center flex flex-col justify-center items-center ${
               activeTab === 'friends' ? 'border-b-2 border-blue-500 text-blue-500' : ''
             }`}
@@ -171,6 +187,10 @@ const UserPage: React.FC = () => {
           </button>
 
           <button
+          onMouseEnter={()=>{
+            if(suggationData && suggationData.length && suggationData.length > 0 || noMoreSuggestion ) return
+            suggationSet()
+          }}
             className={`py-4 w-1/3 text-center flex flex-col justify-center items-center ${
               activeTab === 'suggestions' ? 'border-b-2 border-blue-500 text-blue-500' : ''
             }`}
@@ -180,6 +200,10 @@ const UserPage: React.FC = () => {
           </button>
 
           <button
+          onMouseEnter={()=>{
+            if(Freq && Freq.length && Freq.length > 0 || noMoreReq ) return
+            getFriendReq()
+          }}
             className={`py-4 w-1/3 text-center flex flex-col justify-center items-center ${
               activeTab === 'friend_request' ? 'border-b-2 border-blue-500 text-blue-500' : ''
             }`}

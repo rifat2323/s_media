@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import {useState, useRef, useEffect} from 'react'
 
 
-const UserProfile = ({children,className}:{children:React.ReactNode,className?:string}) => {
+const UserProfile = ({children,className,viwRef}:{children:React.ReactNode,className?:string,viwRef?: (node?: Element | null) => void}) => {
     const ref = useRef<HTMLDivElement>(null)
     const [scrollPosition,setScrollPosition] = useState(-1)
     const [totalWidth,setTotalWidth] = useState(0)
@@ -52,7 +52,7 @@ const UserProfile = ({children,className}:{children:React.ReactNode,className?:s
            }
        }
   return (
-    <div  className=' relative w-full h-fit py-3 flex items-center justify-center   '>
+    <div ref={viwRef}  className=' relative w-full h-fit py-3 flex items-center justify-center   '>
      
      
      

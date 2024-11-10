@@ -17,6 +17,9 @@ const Login = lazy(()=>import("@/pages/Login"))
 const PopularPost = lazy(()=>import("@/pages/PopularPost"))
 const SavePost = lazy(()=>import("@/pages/SavePost"))
 const SingalePost = lazy(()=>import("@/pages/SingalePost"))
+const SearchPage = lazy(()=>import("@/pages/SearhPage"))
+const VisitProfile = lazy(()=>import("@/pages/VisitProfile"))
+
 
 import { CardProvider } from './context/CardCOntext'
 import ExtraContextParent from './context/ExtraContext'
@@ -77,6 +80,12 @@ function App() {
           <SingalePost/>
         </Suspense>
     }/>
+      <Route path='/visit_profile/:id' element={
+        <Suspense fallback={<div>Loading...</div>}>
+
+          <VisitProfile/>
+        </Suspense>
+    }/>
       <Route path='/notifications' element={
         <Suspense fallback={<div>Loading...</div>}>
 
@@ -111,6 +120,12 @@ function App() {
         <Suspense fallback={<div>Loading...</div>}>
 
           <SavePost />
+        </Suspense>
+    }/>
+      <Route path='/search/:text' element={
+        <Suspense fallback={<div>Loading...</div>}>
+
+          <SearchPage />
         </Suspense>
     }/>
 

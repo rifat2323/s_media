@@ -1,17 +1,14 @@
-import  { useEffect, useState } from 'react'
 
-import Post_Datas from '@/utils/fecthing/postDatas'
-import { useToast } from '@/hooks/use-toast'
+
+
+
 import FriedSuggAv from '../UserRecommend/FriedSuggAv'
 import { Button } from '../ui/button'
-type people= {
-  name: string;
-  _id:string
-  profilePicture: string;
-}[]
+import { useProfileSuggation } from '@/zustan/profile_Suggation'
+
 const FriendSugg = () => {
-    const {toast} = useToast()
-    const [loading,setLoading] = useState(false)
+ 
+  /*   const [loading,setLoading] = useState(false)
     const [data,setData] = useState<people | []>([])
     const [page,setPage] = useState(0)
     const [shouldHiddenButton,setShouldHiddenButton] = useState(false)
@@ -45,7 +42,16 @@ const FriendSugg = () => {
   console.log(data)
   const handleLoadMore = ()=>{
     setPage((prev)=>prev+1)
-  }
+  } */
+ 
+
+  const {data} = useProfileSuggation((state)=>state)
+  const suggationSet = useProfileSuggation((state)=>state.getMoreSuggestion)
+  const {incasePage} = useProfileSuggation((state)=>state)
+  const {loading} = useProfileSuggation((state)=>state)
+  const {noMoreSuggestion} = useProfileSuggation((state)=>state)
+  const {page} = useProfileSuggation((state)=>state)
+  
   return (
     <div className=' w-full h-auto  flex flex-col justify-center items-center py-2'>
         {
@@ -60,8 +66,17 @@ const FriendSugg = () => {
         ))
       }
      {
-      !shouldHiddenButton &&(
-        <Button onClick={handleLoadMore} className=' bg-blue-500 text-white hover:bg-blue-600'>Load More</Button>
+      !noMoreSuggestion &&(
+        <Button onClick={()=>{
+          incasePage()
+          suggationSet(page+1)
+
+        }} className=' bg-blue-500 text-white hover:bg-blue-600'>Load More</Button>
+      )
+     }
+     {
+      noMoreSuggestion && (
+        <div className=' text-lg text-gray-950'>No More Suggestion</div>
       )
      }
   

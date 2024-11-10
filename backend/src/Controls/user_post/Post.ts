@@ -10,6 +10,7 @@ import fs from 'node:fs'
 import { getPostSchema } from "../../JoiType";
 import { ExtraReq } from "../../type";
 import LikeCommentSchema from "../../models/CountLike";
+import Like from "../../models/Like";
 
 
 
@@ -97,13 +98,13 @@ export const createPost = async (req:ExtraReq,res:Response)=>{
 }
 
 
-export const getPostBody = async (req:Request,res:Response)=>{
+/* export const getPostBody = async (req:Request,res:Response)=>{
     const {error,value} = getPostSchema.validate(req.body)
     console.log(req.body.friend)
    
      
-      const cursor = sanitize(req.query.cursor as string) || null;
-      const random_cursor = sanitize(req.query.random_cursor as string) || null;
+    const cursor =  req.query.cursor !== "null" ? sanitize(req.query.cursor as string) : null;
+      const random_cursor = req.query.random_cursor !== "null" ?  sanitize(req.query.random_cursor as string) : null;
      
     if(error){
       return res.status(400).send(error?.message)
@@ -136,16 +137,92 @@ export const getPostBody = async (req:Request,res:Response)=>{
    })
 
  ])
+
  const friendCoursor = post.length > 0 ? post[post.length - 1].createdAt : null;
   const randomCoursor = randomPost.length > 0 ? randomPost[randomPost.length - 1].createdAt : null;
  const margePost  = [...post,...randomPost]
+ if(margePost.length === 0){
+   return res.status(400).send("no more post found")
+ }
  return res.status(200).json({
    posts:margePost,
    cursor:friendCoursor,
    random_cursor:randomCoursor
  })
-}
+} */
+ export const getPostBody = async (req: ExtraReq, res: Response) => {
+   const userId = req.userId 
+   const { error, value } = getPostSchema.validate(req.body);
+ 
+   if (error) {
+     return res.status(400).send(error?.message);
+   }
+ 
+   const cursor = req.query.cursor !== "null" ? sanitize(req.query.cursor as string) : null;
+   const random_cursor = req.query.random_cursor !== "null" ? sanitize(req.query.random_cursor as string) : null;
+   const sanitizeArray = value?.friend?.map((item: { FriendId: string }) => sanitize(item.FriendId)) || [];
+ 
+   const query = cursor
+     ? { posterId: { $in: sanitizeArray }, createdAt: { $lt: cursor } }
+     : { posterId: { $in: sanitizeArray } };
+ 
+   const query_random = random_cursor ? { createdAt: { $lt: random_cursor } } : {};
+ 
+   // Retrieve posts and random posts concurrently
+   const [posts, randomPosts] = await Promise.all([
+     LikeCommentSchema.find(query).limit(2).sort({ createdAt: -1 }).lean().populate({
+       path: "postId",
+       populate: {
+         path: "userId",
+         select: "_id name profilePicture",
+       },
+     }),
+     LikeCommentSchema.find(query_random).limit(10).sort({ createdAt: -1 }).lean().populate({
+       path: "postId",
+       populate: {
+         path: "userId",
+         select: "_id name profilePicture",
+       },
+     }),
+   ]);
+ 
+   // Get all post IDs to check if the user has liked any of them
+   const postIds = [...posts, ...randomPosts].map(post => post.postId._id);
+   const userLikes = await Like.find({ postId: { $in: postIds }, userId }).lean();
+   const likedPostIds = new Set(userLikes.map(like => like.postId.toString()));
+ 
+   // Add `isLiked` field to each post
+   const postsWithIsLiked = posts.map(post => ({
+     ...post,
+     isLiked: likedPostIds.has(post.postId._id.toString()),
+   }));
+ 
+   const randomPostsWithIsLiked = randomPosts.map(post => ({
+     ...post,
+     isLiked: likedPostIds.has(post.postId._id.toString()),
+   }));
+ 
+   const friendCursor = postsWithIsLiked.length > 0 ? postsWithIsLiked[postsWithIsLiked.length - 1].createdAt : null;
+   const randomCursor = randomPostsWithIsLiked.length > 0 ? randomPostsWithIsLiked[randomPostsWithIsLiked.length - 1].createdAt : null;
+ 
+   const uniquePostsMap = new Map<string, any>();
+  [...postsWithIsLiked, ...randomPostsWithIsLiked].forEach(post => {
+    uniquePostsMap.set(post.postId._id.toString(), post);
+  });
 
+  const uniquePosts = Array.from(uniquePostsMap.values());
+
+   if (uniquePosts.length === 0) {
+     return res.status(400).send("no more posts found");
+   }
+ 
+   return res.status(200).json({
+     posts: uniquePosts,
+     cursor: friendCursor,
+     random_cursor: randomCursor,
+   });
+ };
+ 
 export const getPost = async (req:Request,res:Response)=>{
     
      

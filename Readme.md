@@ -21,7 +21,6 @@ Welcome to our Social Media App! 🌐 This powerful, feature-rich social media p
 - [License](#-license)
 
 ---
-
 ## 🌟 Features
 
 ### User Functionality

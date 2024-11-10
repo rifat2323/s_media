@@ -3,6 +3,7 @@ import fetch_get_data from '@/utils/fecthing/GetData'
 import { useEffect, useState } from 'react'
 import HeroCard from '../common/HeroCard'
 import { useInView } from "react-intersection-observer";
+import { useProfilePost } from '@/zustan/userProfilePost';
 type Card = {
     LikeCount:number,
     commentCount:number,
@@ -23,7 +24,7 @@ type Card = {
   
   }[];
 const Post = ({shouldFetch}:{shouldFetch:boolean}) => {
-    const [data,setData] = useState<Card | []>([])
+/*     const [data,setData] = useState<Card | []>([])
     const [cursor,setCursor] = useState('')
     const[loading,setLoading] = useState(false)
     const [activeIndex, setActiveIndex] = useState(0);
@@ -52,12 +53,24 @@ const Post = ({shouldFetch}:{shouldFetch:boolean}) => {
      }
      getData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[inView,shouldFetch])
+    },[inView,shouldFetch]) */
+
+
+    const [activeIndex, setActiveIndex] = useState(0);
+    const {Refresh,cursor,getProfilePost,loading,noMorePost,post} = useProfilePost((state)=>state)
+
+    useEffect(()=>{
+      if(!shouldFetch || noMorePost || loading) return
+
+      getProfilePost(cursor)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[noMorePost,loading,shouldFetch])
   return (
-    <div ref={useInRef} className=' w-full h-auto flex justify-center items-center flex-col gap-1'>
+    <div  className=' w-full h-auto flex justify-center items-center flex-col gap-1'>
         
        {
-        data.map((item,index)=>(<HeroCard key={index} index={index} setActiveIndex={setActiveIndex} activeIndex={activeIndex} item={item} imgUrl={item.postId.mediaUrl as string || "https://picsum.photos/800/800"}/>))
+         post && post.map((item,index)=>(<HeroCard key={index} index={index} setActiveIndex={setActiveIndex} activeIndex={activeIndex} item={item} imgUrl={item.postId.mediaUrl as string || "https://picsum.photos/800/800"}/>))
        }
        {
         loading && (
@@ -66,7 +79,7 @@ const Post = ({shouldFetch}:{shouldFetch:boolean}) => {
         )
        }
        {
-        data.length ===0 && (
+        noMorePost && (
             <div className=' text-lg text-gray-950'>No Post create some new Post</div>
         )
        }

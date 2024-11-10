@@ -11,6 +11,7 @@ import connectDB  from './db/Connect'
 import mongoose from 'mongoose';
 import path = require('path');
 import { initializeSocket } from './funcation/soket';
+import client from './db/Radis';
 
 // those are the routes
 import  PublicUser from './routes/Public/user/user';
@@ -23,8 +24,9 @@ import UserFriend from './routes/privet/user/friend'
 import UserProfile from './routes/privet/user/profile'
 import Stroies from './routes/privet/user/stroies'
 import UserNotification from './routes/privet/user/Notification'
-
-
+import Search from './routes/privet/user/Search'
+import VisitProfile from './routes/privet/user/visitProfile'
+import Message from './routes/privet/user/message'
 const port = process.env.PORT ?? 4000
 const origin = process.env.ORIGIN ?? "http://localhost:3000"
 const app = express()
@@ -47,6 +49,19 @@ app.use(express.urlencoded({limit:"10mb",extended:true}))
 app.use(morgan("dev"))
 
 app.use("/upload",express.static(path.join(__dirname,"./upload")))
+
+
+app.get('/set', async (_req:Request,res:Response) => {
+ 
+  const keys = await client.keys('*');
+  const values = await Promise.all(keys.map(async (key) => {
+    const value = await client.get(key);
+    return { key, value: JSON.parse(value!) };
+  }));
+  console.log('All Redis Data:', values);
+  return res.status(200).json(values);
+});
+
 
 //privet folder
 app.use('/user_profile',UserProfile)
@@ -79,6 +94,14 @@ app.use("/user_stroies",Stroies)
 
 //privet user folder
 app.use("/user_notification",UserNotification)
+
+//privet user folder
+
+app.use("/user_search",Search)
+//privet user folder
+app.use("/visit_profile",VisitProfile)
+//privet user folder
+app.use("/message",Message)
 
 app.get('/',(_req:Request,res:Response)=>{
   try{

@@ -9,6 +9,7 @@ const StoryAdder = () => {
   const [loading, setLoading] = useState(false);
   const picture_ref = useRef<HTMLInputElement | null>(null)
   const text_ref = useRef<HTMLTextAreaElement | null>(null)
+  const [img,setImg] = useState<string | null>(null)
  const {toast} = useToast()
   const handleShare =  async () => {
     if (!picture_ref.current && !text_ref.current) return;
@@ -58,13 +59,20 @@ const StoryAdder = () => {
       <div className="flex w-full justify-between items-center mt-4">
         <div className="flex space-x-4">
         <label htmlFor="file">
-          <input id="file" type="file" accept="image/*"  className="hidden" ref={picture_ref}/>
+          <input onChange={(e)=>setImg(URL.createObjectURL( e.target?.files?.[0] as Blob))} id="file" type="file" accept="image/*"  className="hidden" ref={picture_ref}/>
           <Image className="text-gray-500 hover:text-blue-500 cursor-pointer" size={24} />
           </label>
           <button className="text-gray-500 hover:text-blue-500">
             <Video className="w-6 h-6" />
           </button>
         </div>
+        {
+          img &&(
+            <img src={img} width={40} height={30} alt="story image"/>
+
+          )
+        }
+        
 
         {/* Share button */}
         <button

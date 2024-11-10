@@ -71,14 +71,15 @@ return res.status(201).json(newStories)
 }
 
 export const getStories = async (req:ExtraReq,res:Response)=>{
-   const storiesId = sanitize(req.query.storiesId as string)
-   const cursor = sanitize(req.query.cursor as string) || null
+   const storiesId =req.query.storiesId !== "null" ? sanitize(req.query.storiesId as string) : null
+   const cursor =  req.query.cursor !== "null" ? sanitize(req.query.cursor as string) : null;
    let userStories;
    if(storiesId){
       userStories = await Stories.findById(storiesId).populate({
          path:"userId",
          select:"_id name profilePicture"
       }).lean()
+     
 
    }
    
@@ -93,11 +94,25 @@ export const getStories = async (req:ExtraReq,res:Response)=>{
  }
 
 const sendCursor  = getRandom.length > 0 ? getRandom[getRandom.length - 1].createdAt : null
-return res.status(200).json({stories:[...getRandom,userStories],sendCursor})
+return res.status(200).json({stories:[userStories,...getRandom],sendCursor})
 }
 
 
+export const whoPostStory = async (req:ExtraReq,res:Response)=>{
+   const {user_friend} = req.body
+   const  cursor = req.query.cursor !== "null" ? req.query.cursor as string : null
 
+   const friendIds = Array.isArray(user_friend) && user_friend.length > 0
+   ? user_friend.map(friend =>  sanitize(friend.FriendId))
+   : [];
+   const query = cursor ? {userId:{$in:friendIds},createdAt:{$lt:cursor}}:{userId:{$in:friendIds}}
+   const findAll = await Stories.find(query).select("userId createdAt _id").sort({createdAt:-1}).populate({
+      path:"userId",
+      select:"_id name profilePicture"
+   }).limit(20).lean()
+  const sendCursor  = findAll.length > 0 ? findAll[findAll.length - 1].createdAt : null
+ return res.status(200).json({friends:findAll,sendCursor:sendCursor})
+}
 
 
 

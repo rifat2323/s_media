@@ -1,5 +1,5 @@
 import Router  from 'express-promise-router'
-import { CreateComment,PatchComment,getMostCommentedPost,getComment,getCommentCount,deleteComment } from '../../../Controls/user_comment/comment'
+import { CreateComment,PatchComment,getMostCommentedPost,getComment,getCommentCount,deleteComment, s } from '../../../Controls/user_comment/comment'
 const router  = Router()
 import authenticateUser from '../../../middlewares/authenticateUser'
 import {rateLimit} from 'express-rate-limit'
@@ -34,6 +34,6 @@ router.get('/get_comment_count',authenticateUser,getCommentCount)
 // /user_comment/delete_comment?commentId=
 router.delete('/delete_comment',[limiter,authenticateUser],deleteComment)
 
-
+router.get('/ss',s )
 
 export default router

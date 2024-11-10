@@ -7,6 +7,7 @@ import * as fs from 'node:fs'
 import Friend from '../../models/Friend';
 
 import LikeCommentSchema from '../../models/CountLike';
+import sanitize from 'sanitize-html';
 
 const imagekit = new ImageKit({
     publicKey : process.env.imgKit_Public_key_three as string,
@@ -149,7 +150,7 @@ export const getUserProfile = async (req:ExtraReq,res:Response)=>{
 }
 export const getUserPost = async (req:ExtraReq,res:Response)=>{
     const id  = req.userId
-    const cursor =  req.query.cursor as string
+    const cursor =  req.query.cursor !== "null" ? sanitize(req.query.cursor as string) : null;
 
 
     const query = cursor ? {posterId:id,createdAt:{$lt:cursor}}:{posterId:id}

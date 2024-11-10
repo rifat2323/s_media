@@ -1,4 +1,4 @@
-import { Home } from 'lucide-react'
+import { ArrowLeftFromLine, Home } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
@@ -53,11 +53,12 @@ const SingalePost = () => {
     <div  className="min-h-screen  flex flex-col">
       {/* Navbar */}
       <nav  className="bg-white ">
-        <div onClick={()=>{
+        <div  className="max-w-7xl mx-auto px-4 py-4 flex items-center cursor-pointer">
+          <ArrowLeftFromLine  className="h-6 w-6 text-gray-700 stroke-blue-500  mr-5 " onClick={()=>{
           window.history.go(-1)
-        }} className="max-w-7xl mx-auto px-4 py-4 flex items-center cursor-pointer">
-          <Home className="h-6 w-6 text-gray-700 stroke-blue-500  "  />
-          <span className="ml-2 text-xl font-semibold  text-gray-800">Home</span>
+        }} />
+          <Home className="h-6 w-6 text-gray-700 stroke-blue-500  " onClick={()=>window.location.href = "/"}  />
+        
         </div>
       </nav>
       

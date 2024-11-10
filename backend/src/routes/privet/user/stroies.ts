@@ -3,7 +3,7 @@ import authenticateUser from '../../../middlewares/authenticateUser'
 import multer from 'multer'
 import path from "path";
 import * as fs from 'node:fs'
-import { postStories ,getStories} from '../../../Controls/user_stories/stories';
+import { postStories ,getStories, whoPostStory} from '../../../Controls/user_stories/stories';
 
 const router = Router()
 
@@ -29,6 +29,11 @@ router.post('/create_story',[authenticateUser,upload],postStories)
 
 // /user_stroies/get_stories?cursor=rnd&storiesId?=rnd
 router.get("/get_stories",authenticateUser,getStories)
+// /user_stroies/get_poster_story?cursor=rnd
+//take body user_friend
+router.post("/get_poster_story",authenticateUser,whoPostStory)
+
+
 
 
 export default router

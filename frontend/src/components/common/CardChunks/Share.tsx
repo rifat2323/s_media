@@ -4,7 +4,7 @@ import React, { useState,useRef } from "react";
 import { Copy } from 'lucide-react';
 import { Check } from 'lucide-react';
 
-const Share = () => {
+const Share = ({id}:{id:string}) => {
   const [isCopied, setIsCopied] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null)
 
@@ -31,7 +31,7 @@ const Share = () => {
            ref={ref}
           type="text"
           
-           
+           defaultValue={`${window.location.href}singlePost/${id}`}
           placeholder="Enter text to copy"
           className=" flex-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />

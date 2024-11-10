@@ -3,12 +3,12 @@ import {useRef,useEffect,useState,memo, Suspense, lazy, useContext} from 'react'
 
 import { throttle } from 'throttle-debounce';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import {  EllipsisVertical } from 'lucide-react';
+import {  EllipsisVertical, Heart, MessageCircle, Share2 } from 'lucide-react';
 import Imgix from "react-imgix";
-import { ThumbsUp } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
-import { MessageSquareMore } from 'lucide-react';
-import { Forward } from 'lucide-react';
+
+
 import { SendHorizontal } from 'lucide-react';
 import{ format} from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +17,9 @@ import axios from 'axios';
 import { CardContext } from '@/context/CardCOntext';
 import { InView } from 'react-intersection-observer';
 
+import { useNavigate } from 'react-router-dom';
+import { useProfilePost } from '@/zustan/userProfilePost';
+import { useVisitProfile } from '@/zustan/visit_profile';
 
 type Card = {
   LikeCount:number,
@@ -34,7 +37,8 @@ type Card = {
 
 
     },
-  _id:string
+  _id:string,
+  isLiked?:boolean,
 
 };
 
@@ -57,7 +61,7 @@ const HeroCard = ({item,imgUrl,index,activeIndex,setActiveIndex}:{item:Card,imgU
   const [isCommnetListVisiable, setCommnetListVisiable] = useState(false);
   const [isClickedLIke,setIsClickedLike] = useState(false)
 
- 
+  const navigate = useNavigate()
  
  
   const [useInRef2, inView2] = useInView({
@@ -112,6 +116,8 @@ const commentCount =  formatNumber(item?.commentCount)
 useEffect(()=>{
   const getData = async ()=>{
     if(!inView2) return
+    if(item.isLiked !== undefined) return
+    
     try{
       const response =  await  axios.get(`${partialUrl}/user_like/is_liked?postId=${item.postId._id}`,  {
         withCredentials: true,
@@ -121,13 +127,15 @@ useEffect(()=>{
       setIsClickedLike(true)
      }
    
-    }catch(error){
-      console.log(error)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+    }catch(e:any){
+      /* console.log(error) */
+      return
     }
   }
   getData()
 // eslint-disable-next-line react-hooks/exhaustive-deps
-},[inView2, item._id])
+},[inView2])
 
 
     const [x,setX] = useState(0)
@@ -253,7 +261,9 @@ useEffect(()=>{
       getLikeCommnetTotoal()
     },[])
     const shouldRender = Math.abs(index - activeIndex) <= 5;
-
+    const {Refresh} = useProfilePost((state)=>state)
+    const {getRefreshData} = useVisitProfile((state)=>state)
+    
   return (
     <InView as='div' onChange={(inView)=>{
       if(inView){
@@ -277,7 +287,18 @@ useEffect(()=>{
             'hidden':!shouldRender
         })}>
             {/* first one for left side */}
-            <div className={cn(' w-fit flex justify-center items-center gap-2',{
+            <div onClick={()=>{
+             navigate(`/visit_profile/${item?.postId?.userId?._id}`)
+             if(userInfo.id === item?.postId?.userId?._id){
+              Refresh()
+             }else{
+              const id = item && item.postId && item.postId.userId && item.postId.userId._id ? item && item.postId && item.postId.userId && item.postId.userId._id : ""
+              getRefreshData(id)
+             }
+            
+            
+
+            }} className={cn(' w-fit flex justify-center items-center gap-2 cursor-pointer hover:text-blue-600',{
               'hidden':!shouldRender
             })}>
             <Avatar   >
@@ -317,16 +338,16 @@ useEffect(()=>{
        sizes='100'
        />
        <div className=' select-none pt-2 mt-2 w-full justify-between items-center flex pb-3 border-b'>
-        <p onClick={()=>handelLikePosts(item.postId?._id,item.postId?.userId?._id)} className=' cursor-pointer flex justify-center items-center gap-1 font-semibold text-base'><ThumbsUp
+        <p onClick={()=>handelLikePosts(item.postId?._id,item.postId?.userId?._id)} className=' cursor-pointer flex justify-center items-center gap-1 font-semibold text-base'><Heart 
         
-       className={cn("cursor-pointer ",{
-          "stroke-[0]":isClickedLIke,
-          "fill-blue-500":isClickedLIke,
-          "size-6":isClickedLIke
+       className={cn("cursor-pointer h-4 w-4 ",{
+          "stroke-[0]":isClickedLIke || item.isLiked,
+          "fill-red-500":isClickedLIke ||  item.isLiked,
+          "size-6":isClickedLIke ||  item.isLiked
 
        })} />{likeCounts}</p>
-        <div onClick={HandelImportCommentList} className=' relative cursor-pointer flex justify-center items-center gap-1 font-semibold text-base'><MessageSquareMore
-       className={cn("cursor-pointer")} />
+        <div onClick={HandelImportCommentList} className=' relative cursor-pointer flex justify-center items-center gap-1 font-semibold text-base'><MessageCircle 
+       className={cn("cursor-pointer h-4 w-4")} />
        {commentCount}
        {
         isCommnetListVisiable && CommnetList &&
@@ -339,13 +360,13 @@ useEffect(()=>{
        }
        
        </div>
-        <div onClick={handelImportShare} className=' relative cursor-pointer flex justify-center items-center gap-1 font-semibold text-base'><Forward
-       className={cn("cursor-pointer")} />
+        <div onClick={handelImportShare} className=' relative cursor-pointer flex justify-center items-center gap-1 font-semibold text-base'><Share2 
+       className={cn("cursor-pointer h-4 w-4")} />
        Shares
        {
                 isShareVisible && Share &&(
                 <Suspense fallback='loading..'>
-                  <Share/>
+                  <Share id={item?.postId?._id}/>
                 </Suspense>
               )
              }

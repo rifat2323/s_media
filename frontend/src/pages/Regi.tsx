@@ -3,6 +3,12 @@ import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
+import { Eye, EyeOff } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+
 type Field = { 
     label:string
     ,
@@ -23,6 +29,10 @@ const RegistrationForm = () => {
     const emailRef = useRef<HTMLInputElement | null>(null);
     const passwordRef = useRef<HTMLInputElement | null>(null);
     const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
+
+    const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
  const {toast} = useToast()
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -74,89 +84,72 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-green-500">
-      <form 
-        className="bg-white p-8 rounded-lg shadow-md max-w-md w-full space-y-6"
-        onSubmit={handleSubmit}
-      >
-        <h2 className="text-2xl font-bold text-gray-800 text-center">Create an Account</h2>
-
-        <InputField
-          label="Full Name"
-          type="text"
-          name="fullName"
-           ref={fullNameRef}
-          maxLength={35}
-          minLength={4}
-          
-          required
-        />
-
-        <InputField
-          label="Email"
-          type="email"
-          name="email"
-         ref={emailRef}
-          required
-        />
-
-        <InputField
-          label="Password"
-          type="password"
-          name="password"
-          ref={passwordRef}
-          minLength={8}
-          maxLength={45}
-          required
-        />
-
-        <InputField
-          label="Confirm Password"
-          type="password"
-          name="confirmPassword"
-          ref={confirmPasswordRef}
-          minLength={8}
-          maxLength={45}
-          required
-        />
-
-     
-
-        <button 
-          type="submit" 
-          className={`w-full py-3 text-white font-bold rounded-md transition-all ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
-          disabled={loading}
-        >
-          {loading ? (
-            <div className="flex justify-center items-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-              <span>Registering...</span>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-indigo-200 p-4">
+    <Card className="w-full max-w-lg">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-bold text-center">Register</CardTitle>
+        <CardDescription className="text-center">Create your account to get started</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input ref={fullNameRef} min={4} max={20} id="fullName" placeholder="John Doe" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input ref={emailRef} id="email" type="email" placeholder="john@example.com" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                required
+                min={8}
+                ref={passwordRef}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
-          ) : (
-            'Register'
-          )}
-        </button>
-      </form>
-    </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="••••••••"
+                required
+                ref={confirmPasswordRef}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+          <Button type="submit" className="w-full">Register</Button>
+        </form>
+      </CardContent>
+      <CardFooter className="text-center text-sm text-gray-600">
+        Already have an account? <a href="#" className="text-blue-600 hover:underline">{loading ? "loading...":"Log in"}</a>
+      </CardFooter>
+    </Card>
+  </div>
   );
 };
 
-const InputField = forwardRef<HTMLInputElement, Field>(({ label, type, name, onChange, required, placeholder, minLength, pattern, maxLength }, ref) => (
-    <div className="flex flex-col">
-      <label className="mb-2 text-sm font-semibold text-gray-700">{label}</label>
-      <input
-        type={type}
-        name={name}
-        onChange={onChange}
-        required={required}
-        placeholder={placeholder}
-        minLength={minLength}
-        ref={ref}
-        maxLength={maxLength}
-        pattern={pattern}
-        className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 invalid:border-red-300 valid:border-green-300"
-      />
-    </div>
-  ));
+
 
 export default RegistrationForm;

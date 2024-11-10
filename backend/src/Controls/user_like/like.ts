@@ -98,6 +98,9 @@ export const getMostLikePost = async (req:ExtraReq,res:Response)=>{
         select:"_id name profilePicture"
     }
   })
+  if(post.length === 0){
+    return res.status(400).json({post:[]})
+  }
     const sendCursor  = post.length > 0 ? post[post.length - 1].LikeCount : null
     return res.status(200).json({post,sendCursor})
 
@@ -107,7 +110,7 @@ export const getMostLikePost = async (req:ExtraReq,res:Response)=>{
 
 
 export const getLike = async (req:ExtraReq,res:Response)=>{
-  const  cursor = sanitize(req.query.cursor as string) || null
+  const cursor =  req.query.cursor !== "null" ? sanitize(req.query.cursor as string) : null;
   const postId = sanitize(req.query.postId as string)
   const query = cursor ? {postId:postId,createdAt:{$lt:cursor}}:{postId:postId}
     

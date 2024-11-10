@@ -10,7 +10,7 @@ import User from "../../models/User";
 export const getNotification = async (req:ExtraReq,res:Response)=>{
 
     const id = req.userId
-    const cursor = sanitize(req.query.cursor as string)
+    const cursor =  req.query.cursor !== "null" ? sanitize(req.query.cursor as string) : null;
    const qury = cursor ? {posterId:id,createdAt:{$lt:cursor}}:{posterId:id}
     const notification = await Notification.find(qury).limit(20).sort({createdAt:-1}).lean()
 

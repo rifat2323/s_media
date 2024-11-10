@@ -20,6 +20,9 @@ import {
     TooltipTrigger,
   } from "@/components/ui/tooltip"
 import { useEffect } from 'react';
+import { useProfilePost } from '@/zustan/userProfilePost';
+import { usePopularPost } from '@/zustan/popular_post';
+import { useSavedPost } from '@/zustan/savedPost';
 const NavBar = () => {
 
    const {userInfo} = useContext(CardContext)
@@ -44,6 +47,10 @@ const NavBar = () => {
     }
     getProfileInfo()
   },[navigate,inView])
+  const {getProfilePost,post,noMorePost} = useProfilePost((state)=>state)
+  const {getInitialData,post_like,noMorePost_like} = usePopularPost((state)=>state)
+  const {getInitialData:getSavedPost,noMorePost:noMorePost_save,post:save_post} = useSavedPost((state)=>state)
+ 
   return (
     <div ref={ref} className='border-r  shadow-sm overflow-x-hidden flex w-full justify-around items-center h-dvh flex-col  ' >
        <TooltipProvider >
@@ -98,11 +105,14 @@ const NavBar = () => {
 
   </NavLink>
 
-  <NavLink to={'/popular_post'}   className={({ isActive, isPending }) =>
+  <NavLink onMouseEnter={()=>{
+      if(post_like && post_like.length && post_like.length >0 || noMorePost_like) return
+      getInitialData("like")
+    }} to={'/popular_post'}   className={({ isActive, isPending }) =>
    `${styes.general} ${isPending ? styes.pending : isActive ? styes.active : ''}`
   }>
-  <Tooltip>
-    <TooltipTrigger className=' flex justify-center items-center gap-1'>
+  <Tooltip >
+    <TooltipTrigger  className=' flex justify-center items-center gap-1'>
       <Flame color='black'/>
       <h4 className=' font-semibold text-base  text-gray-950'>Popular Post</h4>
       </TooltipTrigger>
@@ -114,11 +124,15 @@ const NavBar = () => {
   </NavLink>
 
 
-  <NavLink to={'/save_post'}   className={({ isActive, isPending }) =>
+  <NavLink onMouseEnter={()=>{
+      if(noMorePost_save ||save_post.length ) return
+     
+      getSavedPost()
+    }} to={'/save_post'}   className={({ isActive, isPending }) =>
    `${styes.general} ${isPending ? styes.pending : isActive ? styes.active : ''}`
   }>
-  <Tooltip>
-    <TooltipTrigger className=' flex justify-center items-center gap-1'>
+  <Tooltip >
+    <TooltipTrigger   className=' flex justify-center items-center gap-1 '>
     <Save color='black' />
       <h4 className=' font-semibold text-base  text-gray-950'>Saved post</h4>
       </TooltipTrigger>
@@ -147,7 +161,10 @@ const NavBar = () => {
     </div>
     </NavLink>
 
-  <Link to={'/profile'} className=' flex w-full justify-start items-center gap-2 '>
+  <Link onMouseEnter={()=>{
+    if(post && post.length && post.length >0 || noMorePost) return
+    getProfilePost()
+  }} to={'/profile'} className=' flex w-full justify-start items-center gap-2 '>
   <Avatar>
   <AvatarImage src={userInfo.img||"https://placehold.co/60x60"} />
   <AvatarFallback>{userInfo.name}</AvatarFallback>

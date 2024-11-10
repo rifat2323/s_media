@@ -25,7 +25,7 @@ import { CardContext } from "@/context/CardCOntext"
 };
 const CardsComponent = () => {
   const {cards} = useContext(CardContext)
-  console.log(cards)
+ /*  console.log(cards) */
  const [activeIndex, setActiveIndex] = useState(0);
 
   

@@ -1,86 +1,31 @@
-import  { useEffect, useState } from 'react'
+import  { useState } from 'react'
 import HeroCard from '@/components/common/HeroCard'
-import fetch_get_data from '@/utils/fecthing/GetData';
-import { useToast } from '@/hooks/use-toast';
-type Card = {
-    LikeCount:number,
-    commentCount:number,
-      postId:{
-        _id:string,
-        createdAt:string,
-        mediaUrl?:string,
-        textContent?:string,
-        userId?:{
-          name:string,
-          profilePicture:string | null,
-          _id:string
-        }
-  
-  
-      },
-    _id:string
-  
-  };
+
+import { usePopularPost } from '@/zustan/popular_post';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
+import RefreshButton from '@/components/common/RefreshButton';
+
 const PopularPost = () => {
-    const [selectedTab, setSelectedTab] = useState('likes');
-    const [CardData,setCardData] = useState<Card[]>([])
-   const [coursor,setCoursor] = useState<string | null>(null)
-   const [activeIndex, setActiveIndex] = useState(0);
-   const [loading,setLoading] = useState(false)
-   const [url,setUrl] = useState<string >(`user_like/get_popular_like_post?`)
-  const {toast} = useToast()
-    
- const handelClick = (tab:string)=>{
-    setSelectedTab(tab)
    
-    if(tab === "likes"){
-        setUrl(`user_like/get_popular_like_post?`)
-    }else{
-        setUrl(`user_comment/get_popular_comment_post?}`)
-    }
-     
- }
- useEffect(()=>{
-    setCoursor(null)
-    setCardData([])
- },[selectedTab])
+   const [activeIndex, setActiveIndex] = useState(0);
+    const [selectedTab,setSelectedTab] = useState('like')
 
-   useEffect(()=>{
-    const getData = async ()=>{
-       setLoading(true)
-       const {response,error} = await fetch_get_data(`${url}cursor=${coursor}`)
-       console.log(response)
-       if(response){
-        setCardData((prevCardData) => [...prevCardData, ...response.data.post]);
-   /*      setCoursor(response.data.sendCursor) */
-       }
-       console.log(error) 
-       if(error?.status === 401){
-        toast({
-            title: 'Unauthorized',
-            description: 'Please login to continue',
-           
-          })
-          setTimeout(() => {
-            window.location.href = '/login'
-          }, 2000);
-       }
-       setLoading(false)
-    }
-    getData()
-
-   // eslint-disable-next-line react-hooks/exhaustive-deps
-   },[url])
-
-
+   const {cursor_comment,cursor_like,loading_like,loading_comment,noMorePost_like,noMorePost_comment,getFetchData,getInitialData,post_comment,post_like,unAuthorized} = usePopularPost((state)=>state)
+   console.log(noMorePost_like)
     return (
       <div className="h-screen overflow-y-auto scrollbar-hide bg-gray-100 flex flex-col items-center ">
+        
         <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 ">
           <div className="flex justify-center space-x-4 mb-6">
             <button
-              onClick={() => handelClick('likes')}
+              onClick={() =>{ 
+                setSelectedTab('like')
+                setActiveIndex(0)
+              }}
               className={`py-2 px-4 rounded-lg font-semibold transition-all ${
-                selectedTab === 'likes'
+                selectedTab === 'like'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
@@ -88,18 +33,69 @@ const PopularPost = () => {
               Most Liked
             </button>
             <button
-              onClick={() => handelClick('comments')}
+            onMouseEnter={()=>{
+              if(noMorePost_comment || post_comment && post_comment.length) return
+              getInitialData("comment")
+            }}
+              onClick={() =>{ 
+                setSelectedTab('comment')
+                setActiveIndex(0)
+              
+
+              }}
               className={`py-2 px-4 rounded-lg font-semibold transition-all ${
-                selectedTab === 'comments'
+                selectedTab === 'comment'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
               Most Commented
             </button>
+
           </div>
           {
-            loading && (
+          unAuthorized && (
+            <Link to={'/login'}>Login</Link>
+          )
+        }
+        {
+          !noMorePost_like && !post_like.length && (
+            <RefreshButton onClick={()=>getInitialData("like")}/>
+          )
+        }
+
+
+        
+  
+          <div className="space-y-4">
+            {
+             selectedTab === 'like' ?  post_like.map((card,index)=>(
+              <HeroCard index={index} setActiveIndex={setActiveIndex} activeIndex={activeIndex} item={card} imgUrl={card.postId.mediaUrl as string} key={card._id}/>
+                   
+                )):
+                post_comment.map((card,index)=>(
+                  <HeroCard index={index} setActiveIndex={setActiveIndex} activeIndex={activeIndex} item={card} imgUrl={card.postId.mediaUrl as string} key={card._id}/>
+                  
+                ))
+            }
+           
+          </div>
+        <p className=' text-gray-900 text-lg text-center mt-4'>{noMorePost_like && selectedTab === 'like' ? "no more post" : noMorePost_comment && selectedTab === "comment" ? "no more comment":""}</p>
+         <div className=' w-full flex justify-center items-center'>
+         
+         <Button onClick={()=>{
+          const cursor = selectedTab === 'like' ? cursor_like : cursor_comment
+          const tab = selectedTab === 'like' ? "like" : "comment"
+           getFetchData(cursor,tab)
+
+
+         }}  className={cn(' bg-blue-500 hover:bg-blue-600 mt-4',{
+          "hidden": noMorePost_like && selectedTab === 'like' || noMorePost_comment && selectedTab === "comment"
+           
+         })}>Load more</Button>
+         
+           {
+            loading_like ||loading_comment  && (
                 <div className=' w-full justify-center items-center flex'>
                  <div className=' w-10 h-10 animate-spin rounded-full border-t-4 border-b-2  border-blue-500 '>
 
@@ -108,15 +104,9 @@ const PopularPost = () => {
                
             )
           }
-  
-          <div className="space-y-4">
-            {
-                !loading && CardData.map((card,index)=>(
-                    <HeroCard index={index} setActiveIndex={setActiveIndex} activeIndex={activeIndex} item={card} imgUrl={card.postId.mediaUrl as string} key={card._id}/>
-                ))
-            }
-           
-          </div>
+
+         </div>
+       
         </div>
       </div>
     )

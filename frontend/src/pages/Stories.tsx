@@ -1,8 +1,10 @@
-import  { useEffect, useRef, useState } from 'react'
+import  { useEffect,  useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { CirclePlus } from 'lucide-react';
 import StoryAdder from '@/components/stories/StoryAdder';
 import fetch_get_data from '@/utils/fecthing/GetData';
+import { useContext } from 'react';
+import { CardContext } from '@/context/CardCOntext';
 
 import {
     Carousel,
@@ -27,26 +29,28 @@ import { Button } from '@/components/ui/button';
 const Stories = () => {
   const [isHide,setIshide] = useState(false)
   const [stories,setStories] = useState<stoies | []>([])
-  const [cursor,setCursor] = useState('')
+  const [cursor,setCursor] = useState<string | null>(null)
   const [loading,setLoading] = useState(false)
   const [activeIndex,setActiveIndex] = useState(0)
-    const [seacrhParam,setSeacrhParam]= useSearchParams()
+    const [seacrhParam]= useSearchParams()
     
-    console.log(seacrhParam.get("url"))
+   const storiesId = seacrhParam.get("id")
     const filerStory = stories.filter((story) => story && story._id)
     
-   
+    const {userInfo} = useContext(CardContext)
  
    useEffect(()=>{
      const getStories = async ()=>{
       
 
      
-      const query = cursor ? `user_stroies/get_stories?cursor=${cursor}`:"user_stroies/get_stories?cursor"
+      const query = `user_stroies/get_stories?storiesId=${storiesId}&cursor=${cursor}`
       const {error,response} = await fetch_get_data(query)
       if(error || !response){
         console.log(error)
-       
+        if(error.status ===401){
+          window.location.href = '/login'
+        }
         return
       }
       setStories(response.data.stories)
@@ -91,7 +95,7 @@ const Stories = () => {
           <button title='add story' className=' relative w-fit h-fit'>
 
         <CirclePlus size={35} className=' stroke-blue-400 hover:stroke-blue-500 transition-all'/>
-         <img src="https://avatars.githubusercontent.com/u/124599?v=4" alt="user" className=' w-14 h-8 opacity-60 aspect-square absolute pointer-events-none top-0 left-0 rounded-[50%] -z-[1]' />
+         <img src={userInfo.img || "https://placehold.co/60x60"} alt="user" className=' w-14 h-8 opacity-60 aspect-square absolute pointer-events-none top-0 left-0 rounded-[50%] -z-[1]' />
           </button>
           <div style={{display:isHide?'block':'none'}} className=' w-fit h-fit absolute top-6 right-0 z-20'>
                <StoryAdder/>
