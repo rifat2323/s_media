@@ -1,6 +1,7 @@
  import { lazy,Suspense,useContext, useState } from "react"
 
 import { CardContext } from "@/context/CardCOntext"
+import { Button } from "../ui/button";
 
 
  const HeroCard = lazy(()=>import("@/components/common/HeroCard"))
@@ -24,7 +25,7 @@ import { CardContext } from "@/context/CardCOntext"
 
 };
 const CardsComponent = () => {
-  const {cards} = useContext(CardContext)
+  const {cards,LoadMoreData,noMoreCard} = useContext(CardContext)
  /*  console.log(cards) */
  const [activeIndex, setActiveIndex] = useState(0);
 
@@ -44,6 +45,15 @@ const CardsComponent = () => {
   
     ))
    }
+   {
+    !noMoreCard ?(
+      <Button onClick={()=>LoadMoreData()} className=" bg-blue-500 hover:bg-blue-600 ">Load More</Button>
+
+    ):(
+      <p className=" text-gray-500">look like you seen everything</p>
+    )
+   }
+   
 
     </div>
   )

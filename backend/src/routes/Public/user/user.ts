@@ -1,6 +1,7 @@
 
 import Router from "express-promise-router";
-import { createUser,LoginUserFn } from '../../../Controls/public_auth/User';
+import { createUser,LoginUserFn,logOut } from '../../../Controls/public_auth/User';
+import authenticateUser from "../../../middlewares/authenticateUser";
 
 const router = Router()
 
@@ -19,7 +20,7 @@ router.post('/register',createUser)
      
 router.get('/login',LoginUserFn)
 
-
+router.get('/logout',authenticateUser,logOut)
 
 
 

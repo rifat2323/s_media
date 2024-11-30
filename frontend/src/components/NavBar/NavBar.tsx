@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { House, Save } from 'lucide-react';
+import { House, LogOut, Save } from 'lucide-react';
 import { Logs } from 'lucide-react';
 
 import { Link, NavLink } from "react-router-dom";
@@ -23,6 +23,9 @@ import { useEffect } from 'react';
 import { useProfilePost } from '@/zustan/userProfilePost';
 import { usePopularPost } from '@/zustan/popular_post';
 import { useSavedPost } from '@/zustan/savedPost';
+import { useChatList } from '@/zustan/Message';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '../ui/button';
 const NavBar = () => {
 
    const {userInfo} = useContext(CardContext)
@@ -33,7 +36,7 @@ const NavBar = () => {
     threshold: 0,
   });
 
-
+ const {toast} = useToast()
   useEffect(() => {
     if(!inView) return
     const getProfileInfo = async ()=>{
@@ -50,9 +53,23 @@ const NavBar = () => {
   const {getProfilePost,post,noMorePost} = useProfilePost((state)=>state)
   const {getInitialData,post_like,noMorePost_like} = usePopularPost((state)=>state)
   const {getInitialData:getSavedPost,noMorePost:noMorePost_save,post:save_post} = useSavedPost((state)=>state)
+  const {getInitialData:getChatUiList,isFetchingError,chatList,isInitialDataLoad} = useChatList((state)=>state)
+
+
+  const handelLogOut = async  ()=>{
+    const {error,response} = await fetch_get_data('user/logout')
+    if(response?.status === 200 && !error){
+      window.location.href = "/login"
+   
+    }else{
+      toast({
+        title:"you are not login"
+      })
+    }
+    }
  
   return (
-    <div ref={ref} className='border-r  shadow-sm overflow-x-hidden flex w-full justify-around items-center h-dvh flex-col  ' >
+    <div ref={ref} className='border-r  shadow-sm overflow-x-hidden flex w-full justify-around items-center h-dvh flex-col   ' >
        <TooltipProvider >
     <NavLink to={'/'}   className={({ isActive, isPending }) =>
     `${styes.general} ${isPending ? styes.pending : isActive ? styes.active : ''}`
@@ -90,7 +107,17 @@ const NavBar = () => {
 
   </NavLink>
 
-  <NavLink to={'/friends'}   className={({ isActive, isPending }) =>
+  <NavLink onMouseEnter={()=>{
+    if(isFetchingError || chatList.length || isInitialDataLoad) return
+   
+      getChatUiList()
+
+  
+     
+
+  
+  
+  }} to={'/message'}   className={({ isActive, isPending }) =>
    `${styes.general} ${isPending ? styes.pending : isActive ? styes.active : ''}`
   }>
   <Tooltip>
@@ -173,7 +200,7 @@ const NavBar = () => {
 <p className='text-base font-semibold text-gray-950 '>{userInfo.name}</p>
   </Link>
 
-   
+  <Button onClick={handelLogOut} className=" w-[90%] flex justify-center items-center gap-1">Log out <LogOut className="h-5 w-5" /></Button>
 
     </div>
   )

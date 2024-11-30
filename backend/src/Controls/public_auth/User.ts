@@ -5,6 +5,8 @@ import sanitizeHtml from "sanitize-html"
 import bcrypt from "bcrypt";
 import  createJwt  from "../../funcation/CreateJwt";
 
+import { ExtraReq } from "../../type";
+
 
    export const LoginUserFn = async (req: Request, res: Response) => {
     
@@ -85,6 +87,12 @@ export const createUser = async (req:Request, res:Response) => {
 
 }
 
+
+export const logOut = async (_req:ExtraReq, res:Response) => {
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
+    return res.status(200).json({ logout: true });
+}
 
 
 

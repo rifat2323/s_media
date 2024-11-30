@@ -1,53 +1,23 @@
 
-import { lazy,Suspense,useEffect,useRef,useContext} from "react"
+import { lazy,Suspense} from "react"
 const TopComponent = lazy(()=>import("@/components/Home/TopComponent"))
 const Profiles = lazy(()=>import("@/components/Home/Profiles"))
 const CardsComponent = lazy(()=>import("@/components/Home/CardsComponent"))
-import { throttle } from "throttle-debounce"
-import { CardContext } from "@/context/CardCOntext"
+
 
 
 
 
 const Home = () => {
  
-   const ref = useRef<HTMLDivElement | null>(null)
+   
 
 
- const {setShoudLoadMore} = useContext(CardContext)
 
-  
-
-  
-
-     
-
- 
-
-
- useEffect(()=>{
-  if(!ref.current) return
-  const element = ref.current
- const handelScroll =throttle( 500,()=>{
- 
- 
-  if(element.scrollTop + element.clientHeight >=element.scrollHeight - 100){
-    console.log("loading more home")
-    setShoudLoadMore(true)
-  }
-  
- })
-
-  element.addEventListener("scroll",handelScroll)
-  return ()=>{
-    element.removeEventListener("scroll",handelScroll)
-  }
-
- },[setShoudLoadMore])
 
   
   return (
-    <div ref={ref} className=" scrollbar-hide w-full flex flex-col mt-6 md:max-h-dvh md:overflow-y-scroll ">
+    <div  className="  w-full flex flex-col mt-6 min-h-dvh ">
      
       <Suspense fallback={<div>Loading...</div>}>
 

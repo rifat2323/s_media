@@ -1,4 +1,4 @@
-import  { useState } from 'react'
+import  { useEffect, useState } from 'react'
 import HeroCard from '@/components/common/HeroCard'
 
 import { usePopularPost } from '@/zustan/popular_post';
@@ -13,9 +13,13 @@ const PopularPost = () => {
     const [selectedTab,setSelectedTab] = useState('like')
 
    const {cursor_comment,cursor_like,loading_like,loading_comment,noMorePost_like,noMorePost_comment,getFetchData,getInitialData,post_comment,post_like,unAuthorized} = usePopularPost((state)=>state)
-   console.log(noMorePost_like)
+   useEffect(()=>{
+    if(post_like && post_like.length && post_like.length >0 || noMorePost_like) return
+    getInitialData("like")
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   },[])
     return (
-      <div className="h-screen overflow-y-auto scrollbar-hide bg-gray-100 flex flex-col items-center ">
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center w-full ">
         
         <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 ">
           <div className="flex justify-center space-x-4 mb-6">
@@ -67,7 +71,7 @@ const PopularPost = () => {
 
         
   
-          <div className="space-y-4">
+          <div className="space-y-4 w-full flex flex-col justify-center items-center">
             {
              selectedTab === 'like' ?  post_like.map((card,index)=>(
               <HeroCard index={index} setActiveIndex={setActiveIndex} activeIndex={activeIndex} item={card} imgUrl={card.postId.mediaUrl as string} key={card._id}/>

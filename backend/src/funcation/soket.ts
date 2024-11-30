@@ -3,9 +3,9 @@ import { Server,Socket} from "socket.io";
 import universelCookie from 'universal-cookie'
 import verifyJwt from "./VerifyJwt";
 import client from "../db/Radis";
+import {send_and_receive_message }from '../Controls/user_message/message'
+let io:Server ;
 
-let io:Server;
-let isSocketInitialized = false;
 
 
 const origin = process.env.ORIGIN ?? "http://localhost:3000"
@@ -33,13 +33,14 @@ export const initializeSocket =   (nameServer:any):void => {
     //handel diffarent thing with funcation 
     // import func and set socket for getting cookie in multiple place 
     handelJoin(socket,rawCookie)
+    send_and_receive_message(socket,rawCookie,io)
    
 
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
     });
 });
-isSocketInitialized = true
+
 console.log('Socket  initialized!');
 }
 
@@ -75,6 +76,7 @@ const handelJoin = async (soket:Socket,rawCookie:string)=>{
         if (!soket.rooms.has(data.user_id)) {
             await client.del(data.user_id);
             console.log(`User has disconnected from room: ${data.user_id}`);
+            
         } else {
             console.error(`User was still in the room at disconnection: ${data.user_id}`);
         }
@@ -83,17 +85,6 @@ const handelJoin = async (soket:Socket,rawCookie:string)=>{
 
 
 
-// this will be call every where for io.emit and io.on for listing and emitting
 
-export const getSocket = () => {
-    if(!isSocketInitialized){
-      
-        return null 
-    }
-   
-    console.log('Socket initialized!');
- 
-    return io
-}
-
+export const getSocket = () => io;
 

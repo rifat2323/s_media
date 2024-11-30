@@ -60,7 +60,7 @@ const FriendSugg = () => {
           </div>
       }
       {
-        !loading && data?.map(item=>(
+         data?.map(item=>(
           <FriedSuggAv person={item} key={item._id}/>
 
         ))

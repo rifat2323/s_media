@@ -11,7 +11,7 @@ import ImprovedColorfulFriendsList from '@/components/profile/Friends';
 import FriendSugg from '@/components/profile/FriendSugg';
 import FriendRequest from '@/components/profile/FriendRequest';
 
-import UserProfile from '@/components/common/UserProfile';
+
 import { useProfile } from '@/zustan/Profile';
 import { useProfileSuggation } from '@/zustan/profile_Suggation';
 import { useFriendReq } from '@/zustan/getFriendReq';
@@ -128,7 +128,7 @@ const UserPage: React.FC = () => {
    const {Freq,getFriendReq,noMoreReq} = useFriendReq((state)=>state)
     console.log(Freq)
   return (
-    <div ref={ref} className="max-w-4xl mx-auto mt-0 max-h-dvh overflow-y-auto scrollbar-hide ">
+    <div ref={ref} className="max-w-4xl mx-auto mt-0 min-h-dvh  ">
       {/* Cover Photo */}
       <div className="w-full flex flex-col justify-center items-center gap-3">
         <label htmlFor='user-cover'>

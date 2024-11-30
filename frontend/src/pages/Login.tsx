@@ -87,8 +87,9 @@ const handelSubmit =  async(e:React.FormEvent<HTMLFormElement>)=>{
       </form>
   
       <p className="mt-10 text-center text-sm text-gray-500">
-        Not a member?
-        <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Start a 14 day free trial</a>
+        Don't have an account . 
+       <p onClick={()=>window.location.href = '/registration'} className=" text-blue-500 text-xs underline cursor-pointer">Sign up now</p>
+       
       </p>
     </div>
   </div>

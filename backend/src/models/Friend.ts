@@ -6,6 +6,11 @@ interface Friend extends Document{
   FriendId:ObjectId,
   status: "pending" | "approved" | "declined" | "blocked" | "b_friend",
    createdAt:Date;
+   lastMessage:string,
+   lastMessageSenderId:ObjectId,
+   lastMessageTimestamp:Date,
+  
+
     
 }
 
@@ -26,7 +31,13 @@ const fr = new Schema<Friend>({
         type:String,
         enum:["pending","approved","declined","blocked","b_friend","send"],
         default:"pending"
-    }
+    },
+    lastMessage: String,               
+    lastMessageSenderId: {
+      type: Schema.Types.ObjectId,
+      ref: User
+    },                                  
+    lastMessageTimestamp: Date
 },{timestamps:true,autoIndex:true});
 const Friend = model<Friend>('Friend', fr);
 export default Friend;

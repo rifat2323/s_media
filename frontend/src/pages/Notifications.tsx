@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useContext } from 'react'
 import NotificationChunks from '@/components/Notification/NotificationChunks'
 import fetch_get_data from '@/utils/fecthing/GetData';
 import FriendRequestCunks from '@/components/Notification/FriendRequestCunks';
-
+import { CardContext } from '@/context/CardCOntext';
+import { useInView } from 'react-intersection-observer';
 
 interface data {
   commenterId: string;
@@ -19,8 +20,8 @@ interface data {
 const Notifications = () => {
   const [data,setData] = useState<data[] | []>([])
   const [coursor,setCoursor] = useState<string >('')
-
-
+  const {ref,inView} = useInView({threshold:0.1})
+  const {Socket} = useContext(CardContext)
   useEffect(()=>{
     const getData =  async()=>{
       const {error,response} = await fetch_get_data(`user_notification/get_notification?cursor=${coursor} `)
@@ -35,9 +36,22 @@ const Notifications = () => {
     getData()
 
   },[])
+
+
+  useEffect(()=>{
+    if(!Socket || !inView) return
+    Socket.on('new_notification',(notification)=>{
+      setData((prev)=>[notification,...prev])
+      console.log(notification)
+    })
+   return()=>{
+    console.log("unmount")
+    Socket.off('new_notification')
+   }
+  },[inView])
     
   return (
-    <div className="max-w-md mx-auto bg-white  rounded-lg p-4">
+    <div  ref={ref} className="max-w-md mx-auto bg-white  rounded-lg p-4">
     <h2 className="text-xl font-semibold mb-4">Notifications</h2>
     {/* Render Notification Components */}
     {data.map((notification, index) => {

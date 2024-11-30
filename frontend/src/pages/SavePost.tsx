@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import HeroCard from '@/components/common/HeroCard'
 
@@ -12,8 +12,15 @@ const SavePost = () => {
     const [activeIndex,setActiveIndex] = useState(0)
  
    const {getMorePost,loading,noMorePost,increasePage,page,post,getInitialData} = useSavedPost((state)=>state)
+
+   useEffect(()=>{
+    if(noMorePost || post.length) return
+    getInitialData()
+
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   },[])
   return (
-    <div  className=' w-full flex flex-col justify-start items-center py-7 h-dvh overflow-y-auto scrollbar-hide'>
+    <div  className=' w-full flex flex-col justify-start items-center py-7  min-h-screen'>
         <h1 className=' mb-5 text-xl md:text-4xl text-gray-900 font-bold'>All Your Saved Post Here</h1>
        {
         post.length === 0 && !loading && !noMorePost &&(

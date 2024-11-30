@@ -1,4 +1,4 @@
-import React, { useRef, useState,forwardRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -9,19 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 
-type Field = { 
-    label:string
-    ,
-     type:string
-    , name:string,
-     onChange?:(e:React.ChangeEvent<HTMLInputElement>)=>void,
-      required?:boolean,
-       placeholder? :string,
-       minLength?:number,
-       pattern?:string,
-       maxLength?:number,
-       ref: React.ForwardedRef<HTMLInputElement>
-}
 
 const partialUrl:string =   import.meta.env.VITE_BASE_URL as string ?? 'http://localhost:4000'
 const RegistrationForm = () => {
@@ -84,7 +71,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-indigo-200 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br  p-4">
     <Card className="w-full max-w-lg">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Register</CardTitle>
@@ -143,7 +130,7 @@ const RegistrationForm = () => {
         </form>
       </CardContent>
       <CardFooter className="text-center text-sm text-gray-600">
-        Already have an account? <a href="#" className="text-blue-600 hover:underline">{loading ? "loading...":"Log in"}</a>
+        Already have an account? <a  onClick={() => navigate('/login')} className="text-blue-600 hover:underline cursor-pointer">{loading ? "loading...":"Log in"}</a>
       </CardFooter>
     </Card>
   </div>

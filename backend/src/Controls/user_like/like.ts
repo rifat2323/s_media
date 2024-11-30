@@ -5,9 +5,11 @@ import sanitize from "sanitize-html";
 import LikeCommentSchema from "../../models/CountLike";
 import { getSocket } from "../../funcation/soket"
 import Notification from "../../models/Notification";
+import { NotifySoket } from "../../funcation/Notification";
+
 
 const io = getSocket()
-
+console.log(io)
 
 /**
  * Creates or updates a like for a post.
@@ -64,14 +66,20 @@ export const createOrUpdateLike =  async (req:ExtraReq,res:Response)=>{
 
 
   ])
-  if(io){
-    io.to(posterId).emit("new_like",{
-        postId:postId,
-      commenterName:userName,
+
+  /*   const NotifySoket = (io:Server)=>{
+  io.to(posterId).emit("new_notification",{
+    postId:postId,
+    commenterName:userName,
       commenterImg:userImg,
-      type:"liked"
-    })
-  }
+      type:"liked",
+      commenterId:id,
+      posterId:posterId
+
+  })
+  } */
+
+  NotifySoket(posterId,userName!,userImg!,"liked",id!,posterId,io)
 
   
   return res.status(200).send("liked")

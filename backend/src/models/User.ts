@@ -19,7 +19,8 @@ interface IUSER extends Document{
     createdAt?: Date;
     updatedAt?: Date;
     FriendLimit?:number;
-    CoverPhoto?:string
+    CoverPhoto?:string;
+
 
 }
 
@@ -90,7 +91,8 @@ const userSchema = new mongoose.Schema<IUSER>({
     CoverPhoto:{
         type:String,
         default:""
-    }
+    },
+    
    
   
 

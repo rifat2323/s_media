@@ -1,6 +1,6 @@
 import { useEffect,  useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { UserPlus, UserMinus, User, Users } from "lucide-react"
@@ -96,7 +96,7 @@ getData()
   const {previousFriendId,getInitialFriendData} = useVisitProfile((sate)=>sate)
  
   return (
-    <div  className="max-w-4xl mx-auto h-dvh overflow-x-auto scrollbar-hide mb-5">
+    <div  className="max-w-4xl mx-auto min-h-dvh overflow-x-auto  mb-5">
       <div className="relative">
         <img
           src={ user?.CoverPhoto||"/placeholder.svg?height=350&width=1000"}

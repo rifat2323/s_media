@@ -1,10 +1,10 @@
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import Home from '@/pages/Home'
-import { lazy,Suspense, useState } from 'react'
+import { lazy,Suspense,   useState } from 'react'
 import { cn } from './lib/utils'
 import { Toaster } from "@/components/ui/toaster"
 import NavBar from "@/components/NavBar/NavBar"
-import SmallNavBar from "@/components/NavBar/SmallNavBar"
+
 const UserRec = lazy(()=>import("@/components/UserRecommend/UserRec"))
 const FriendsActive = lazy(()=>import("@/components/UserRecommend/FriendsActive"))
 const FriendSuggation = lazy(()=>import("@/components/UserRecommend/FriendSuggation"))
@@ -19,21 +19,22 @@ const SavePost = lazy(()=>import("@/pages/SavePost"))
 const SingalePost = lazy(()=>import("@/pages/SingalePost"))
 const SearchPage = lazy(()=>import("@/pages/SearhPage"))
 const VisitProfile = lazy(()=>import("@/pages/VisitProfile"))
+const SingaleMessagePage = lazy(()=>import("@/pages/SingaleMessagePage"))
+
 
 
 import { CardProvider } from './context/CardCOntext'
 import ExtraContextParent from './context/ExtraContext'
+import NavbarWithSheet from './components/NavBar/NavBarWIthSheet'
+
 
 
 function App() {
  const [pathname,setPathname] = useState(window.location.pathname)
 
-
-
-
  
   return (
-    <div className=' w-full flex-col md:flex-row  justify-start flex md:justify-center gap-2  md:items-start h-dvh'>
+    <div className=' w-full flex flex-col md:flex-row justify-start md:justify-center gap-2 relative  '>
      <Toaster/>
       <BrowserRouter>
       <CardProvider>
@@ -42,9 +43,9 @@ function App() {
        
 
      
-      <div className={cn(' hidden md:flex ml-2  md:h-dvh w-full md:w-[20%]  justify-center items-center flex-col',{
+      <div className={cn(' hidden md:flex fixed top-0 left-0 w-[20%] h-full justify-center items-center flex-col',{
         "md:hidden":pathname==='/registration' || pathname==='/login'  ||  pathname.startsWith('/singlePost')
-      })}>
+      })} style={{ alignSelf: 'flex-start' }}>
         <Suspense fallback={<div>Loading...</div>}>
    <NavBar />
   
@@ -55,10 +56,11 @@ function App() {
     "hidden":pathname==='/registration'|| pathname==='/login' ||  pathname.startsWith('/singlePost')
    })}>
     <Suspense fallback={<div>Loading...</div>}>
-     <SmallNavBar/>
+    {/*  <SmallNavBar/> */}
+    <NavbarWithSheet/>
     </Suspense>
    </div>
-        <div className=' w-full md:flex-1'>
+        <div className='midConteiner'>
       <Routes>
 
       <Route index element={<Home/>}/>
@@ -68,7 +70,7 @@ function App() {
           <Stories/>
         </Suspense>
     }/>
-      <Route path='/friends' element={
+      <Route path='/message' element={
         <Suspense fallback={<div>Loading...</div>}>
 
           <Friends/>
@@ -128,6 +130,12 @@ function App() {
           <SearchPage />
         </Suspense>
     }/>
+      <Route path='/message_to/:id' element={
+        <Suspense fallback={<div>Loading...</div>}>
+
+          <SingaleMessagePage />
+        </Suspense>
+    }/>
 
 
 
@@ -135,9 +143,9 @@ function App() {
         </div>
 
 
-        <div className={cn(' scrollbar-hide hidden lg:flex w-[30%] overflow-y-auto h-dvh pl-2  flex-col justify-start pt-8 items-center border-l',{
+        <div className={cn(' hidden lg:flex fixed top-0 right-0 w-[25%] h-full pl-2 flex-col justify-start pt-8 items-center border-l',{
           "lg:hidden":pathname==='/registration'|| pathname==='/login'  ||  pathname.startsWith('/singlePost')
-        })}>
+        })} style={{ alignSelf: 'flex-start' }}>
         <Suspense fallback={<div>Loading...</div>}>
           <UserRec/>
         </Suspense>
