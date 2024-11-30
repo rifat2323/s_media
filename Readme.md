@@ -6,12 +6,12 @@
   <br />
 
   <div>
-    <img src="https://iili.io/20YZxbR.md.png" alt="React"  width="10px" height="10px"/>
+    <img src="https://iili.io/20YZxbR.md.png" alt="React"  width="60px" height="60px"/>
 
     
    
  <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
- <img src="https://iili.io/20YtWjR.png"  width="10px" height="10px"/>
+ <img src="https://iili.io/20YtWjR.png"  width="60px" height="60px"/>
   </div>
 
   <h3 align="center">Social Media App</h3>
